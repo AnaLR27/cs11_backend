@@ -1,0 +1,1149 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "API Documentation CodeJobs",
+    "description": "Swagger CodeJobs by nel386"
+  },
+  "host": "localhost:8000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "auth-token",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "description": "Endpoint para iniciar sesión",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos de inicio de sesión",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "employer@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "1234"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación fallida"
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+
+        "summary": "Signup",
+        "description": "Endpoint para registrarse",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos de registro",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "ejemplo@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "1234"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "admin"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Registro exitoso"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          }
+        }
+      }
+    },
+    "/job/all-jobs": {
+      "get": {
+        "tags": ["Job"],
+
+        "summary": "Obtener todas las ofertas de trabajo activas",
+        "description": "Endpoint para obtener todas las ofertas de trabajo activas existentes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ofertas de trabajo obtenidas exitosamente",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Desarrollador web"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Se requiere desarrollador web con experiencia en React y Node.js"
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "San Francisco, CA"
+                  },
+                  "salary": {
+                    "type": "number",
+                    "example": 100000
+                  },
+                  "jobType": {
+                    "type": "string",
+                    "example": "Tiempo completo"
+                  },
+                  "privacy": {
+                    "type": "string",
+                    "example": "Público"
+                  },
+                  "jobActive": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2022-10-01T00:00:00.000Z"
+                  },
+                  "company": {
+                    "type": "string",
+                    "example": "5f476680a02e452e18c32b4c"
+                  },
+                  "companyName": {
+                    "type": "string",
+                    "example": "Acme Inc."
+                  },
+                  "logo": {
+                    "type": "string",
+                    "example": "https://picsum.photos/200"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación fallida"
+          }
+        }
+      }
+    },
+    "/job/jobs-applied/{id}": {
+      "get": {
+        "tags": ["Job"],
+
+        "summary": "Obtener las ofertas de trabajo a las que se ha aplicado un usuario específico",
+        "description": "Endpoint para obtener las ofertas de trabajo a las que se ha aplicado un usuario específico",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del usuario",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ofertas de trabajo a las que se ha aplicado el usuario",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Desarrollador Full Stack"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Buscamos un desarrollador full stack para unirse a nuestro equipo"
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "Ciudad de México"
+                  },
+                  "salary": {
+                    "type": "number",
+                    "example": 10000
+                  },
+                  "jobType": {
+                    "type": "string",
+                    "example": "Tiempo completo"
+                  },
+                  "privacy": {
+                    "type": "string",
+                    "example": "Público"
+                  },
+                  "jobActive": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2022-12-01T12:00:00.000Z"
+                  },
+                  "companyName": {
+                    "type": "string",
+                    "example": "Empresa XYZ"
+                  },
+                  "logo": {
+                    "type": "string",
+                    "example": "https://www.example.com/logo.png"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación fallida"
+          }
+        }
+      }
+    },
+    "/job/jobs-applied/{loginId}/{jobId}": {
+      "delete": {
+        "tags": ["Job"],
+        "deprecated": true,
+        "summary": "Borrar una oferta de trabajo a la que se ha aplicado un usuario específico",
+        "description": "Endpoint para borrar una oferta de trabajo a la que se ha aplicado un usuario específico",
+        "operationId": "removeJobApplication",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "loginId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Oferta de trabajo borrada exitosamente"
+          },
+          "400": {
+            "description": "Solicitud inválida"
+          },
+          "404": {
+            "description": "Oferta de trabajo no encontrada"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/candidate/all-candidates": {
+      "get": {
+        "tags": ["Candidate"],
+        "summary": "Obtener información de todos los candidatos",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Información de todos los candidatos",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Succeeded"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "loginId": {
+                        "type": "string",
+                        "example": "63f476530a02e452e18c32ae"
+                      },
+                      "photo": {
+                        "type": "string",
+                        "example": "https://example.com/profile-photo.jpeg"
+                      },
+                      "fullName": {
+                        "type": "string",
+                        "example": "John Doe"
+                      },
+                      "bootcamp": {
+                        "type": "string",
+                        "example": "Web Development"
+                      },
+                      "registerAt": {
+                        "type": "date",
+                        "example": "2021-01-01T00:00:00.000+00:00"
+                      }
+                    }
+                  }
+                },
+                "error": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job/job-list": {
+      "get": {
+        "tags": ["Job"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener la lista de todos los trabajo",
+        "description": "Obtener la lista de ofertas de trabajo",
+        "responses": {
+          "200": {
+            "description": "Operacion exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "object",
+                            "properties": {
+                              "logo": {
+                                "type": "string"
+                              },
+                              "companyName": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "companyName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          },
+                          "logo": {
+                            "type": "string"
+                          },
+                          "jobActive": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error, trabajos no encontrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job/post-job": {
+      "post": {
+        "tags": ["Job"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Crear una nueva oferta de trabajo",
+        "description": "Endpoint para crear una nueva oferta de trabajo",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos para crear una nueva oferta de trabajo",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Desarrollador Full Stack"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Buscamos un desarrollador full stack con experiencia en Node.js y React"
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "example": "España"
+                    },
+                    "city": {
+                      "type": "string",
+                      "example": "Madrid"
+                    }
+                  }
+                },
+                "salary": {
+                  "type": "integer",
+                  "example": 18000
+                },
+                "jobType": {
+                  "type": "string",
+                  "example": "Presencial"
+                },
+                "jobActive": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Oferta de trabajo creada exitosamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/changePassword/{id}": {
+      "patch": {
+        "tags": ["Auth"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Cambiar la contraseña",
+        "description": "Endpoint para cambiar la contraseña",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID del usuario que quiere cambiar su contraseña",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos para cambiar la contraseña",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "oldPassword": {
+                  "type": "string",
+                  "example": "1234"
+                },
+                "newPassword": {
+                  "type": "string",
+                  "example": "5678"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contraseña cambiada exitosamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación fallida"
+          },
+          "500": {
+            "description": "Error del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job/job-single/{id}": {
+      "get": {
+        "tags": ["Job"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener una oferta de trabajo específica",
+        "description": "Endpoint para obtener una oferta de trabajo específica",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID de la oferta de trabajo",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Oferta de trabajo encontrada",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Oferta de trabajo no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/candidate/{loginId}": {
+      "get": {
+        "tags": ["Candidate"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener información de un candidato",
+        "description": "Endpoint para obtener información de un candidato específico",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "loginId",
+            "description": "ID del candidato",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Información del candidato obtenida exitosamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job/employer-jobs/{loginId}": {
+      "get": {
+        "tags": ["Job"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener todos los trabajos de un empleador por su loginId",
+        "description": "Endpoint para obtener todos los trabajos de un empleador por su loginId",
+        "operationId": "getEmployerJobsByLoginId",
+        "produces": ["application/json"],
+
+        "parameters": [
+          {
+            "name": "loginId",
+            "in": "path",
+            "required": true,
+            "description": "Id de inicio de sesión del empleador",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de trabajos del empleador"
+          },
+          "401": {
+            "description": "Token no proporcionado o inválido"
+          }
+        }
+      }
+    },
+    "/job/delete-job/{loginId}/{jobId}": {
+      "delete": {
+        "tags": ["Job"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Eliminar un trabajo de un determinado empleador por su loginId y jobId",
+        "description": "Eliminar un trabajo de un determinado empleador por su loginId y jobId",
+        "operationId": "deleteJob",
+        "parameters": [
+          {
+            "name": "loginId",
+            "in": "path",
+            "description": "El loginId del empleador dueño del trabajo",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "El id del trabajo a ser eliminado",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa"
+          },
+          "400": {
+            "description": "Error en la solicitud"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/job/edit-job/{loginId}/{jobId}": {
+      "patch": {
+        "tags": ["Job"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Editar una oferta de trabajo existente",
+        "description": "Endpoint para editar una oferta de trabajo existente",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "loginId",
+            "in": "path",
+            "required": true,
+            "description": "El loginId del empleador que creó la oferta de trabajo",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "description": "El id del trabajo a editar",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Datos para editar la oferta de trabajo",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Desarrollador Full Stack"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Buscamos un desarrollador full stack con experiencia en Node.js y React"
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "example": "España"
+                    },
+                    "city": {
+                      "type": "string",
+                      "example": "Madrid"
+                    }
+                  }
+                },
+                "salary": {
+                  "type": "integer",
+                  "example": 18000
+                },
+                "jobType": {
+                  "type": "string",
+                  "example": "Presencial"
+                },
+                "jobActive": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Oferta de trabajo editada exitosamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/candidate/{loginId}/watchlist": {
+      "post": {
+        "tags": ["Candidate"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Agregar un candidato a la lista de seguimiento",
+        "description": "Endpoint para agregar un candidato a la lista de seguimiento de un empleador",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "loginId",
+            "description": "Login Id del candidato",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Candidato agregado a la lista de seguimiento exitosamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No tienes permiso para realizar esta acción",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
