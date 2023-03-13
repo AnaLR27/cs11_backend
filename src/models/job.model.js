@@ -5,6 +5,7 @@ const jobSchema = new Schema({
   title: {
     type: String,
     required: true,
+    trim: true,
   },
   company: {
     type: Schema.Types.ObjectId,
@@ -13,6 +14,7 @@ const jobSchema = new Schema({
   },
   companyName: {
     type: String,
+    trim: true,
   },
   location: {
     country: {
@@ -86,6 +88,22 @@ const jobSchema = new Schema({
     type: Number,
     required: true,
   },
+  specialty: {
+    type: String,
+    required: true,
+    enum: [
+      "Desarrollador Web",
+      "Desarrollador Móvil",
+      "Data Science",
+      "UX/UI",
+      "DevOps",
+      "Ciberseguridad",
+      "Marketing",
+      "Ventas",
+      "Otros",
+    ],
+    default: "Desarrollador Web",
+  },
   jobType: {
     type: String,
     required: true,
@@ -115,6 +133,8 @@ const jobSchema = new Schema({
   logo: {
     type: Schema.Types.String,
     ref: "Employer",
+    trim: true,
+    required: true,
   },
 });
 

@@ -5,17 +5,21 @@ const candidateSchema = new Schema({
   role: {
     type: Schema.Types.String,
     ref: "Login",
+    required: true,
   },
   loginId: {
     type: Schema.Types.ObjectId,
     ref: "Login",
+    required: true,
   },
   userName: {
     type: Schema.Types.String,
+    required: true,
     ref: "Login",
   },
   email: {
     type: Schema.Types.String,
+    required: true,
     ref: "Login",
   },
   fullName: {
@@ -110,6 +114,7 @@ const candidateSchema = new Schema({
       idJob: {
         type: Schema.Types.ObjectId,
         ref: "Job",
+        required: true,
       },
       appliedDate: {
         type: Date,
@@ -128,6 +133,7 @@ const candidateSchema = new Schema({
       employerId: {
         type: Schema.Types.ObjectId,
         ref: "Employer",
+        required: true,
       },
       lastUpdate: {
         type: Date,

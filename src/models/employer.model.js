@@ -5,18 +5,22 @@ const employerSchema = new Schema({
   role: {
     type: Schema.Types.String,
     ref: "Login",
+    required: true,
   },
   loginId: {
     type: Schema.Types.ObjectId,
     ref: "Login",
+    required: true,
   },
   userName: {
     type: Schema.Types.String,
     ref: "Login",
+    required: true,
   },
   email: {
     type: Schema.Types.String,
     ref: "Login",
+    required: true,
   },
   companyName: {
     type: String,
