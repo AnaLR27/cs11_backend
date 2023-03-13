@@ -7,6 +7,7 @@
 - [**ROUTES**](#routes)
 - [**MODELS**](#models)
 - [**CONTROLLERS**](#controllers)
+- [**CONTRIBUTORS**](#contributors)
 
 ## **DEPENDENCIES**
 
@@ -53,6 +54,12 @@ src
 
 
 - *refresh* - checking the refresh token in the request headers. Returns a new access token in order to improve user experience and avoid making the user restart their session when the access token has expired.
+
+## **CONTRIBUTORS**
+
+| Name             |                      Github                       |                         Linkedin                         |                    Email                    |
+| :--------------- | :-----------------------------------------------: | :------------------------------------------------------: | :-----------------------------------------: |
+| Alina Dorosh     | [**&check;**](https://github.com/AlinaDorosh-dev) | [**&check;**](https://www.linkedin.com/in/alina-dorosh/) | [Contact me](mailto:alina.dorosh@gmail.com) |
 
  
 
