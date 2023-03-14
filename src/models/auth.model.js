@@ -1,10 +1,16 @@
+/**
+ * @fileoverview This file contains the register schema for the database.
+ * named Login in order to save it in the database as "logins"
+ * @author Alina Dorosh
+ */
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const loginSchema = new Schema({
   userName: {
     type: String,
-    // required: true,
+    required: true,
     minlength: 4,
   },
   email: {
@@ -12,6 +18,7 @@ const loginSchema = new Schema({
     required: true,
     unique: true,
     trim: true,
+    match: [/\S+@\S+\.\S+/, "is invalid"],
     minlength: 6,
   },
   password: {
