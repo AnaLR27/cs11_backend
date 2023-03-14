@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 // @Acceso Privado
 const getAllCandidates = async (req, res) => {
   // Buscar todos los candidatos en la base de datos
-  const candidates = await Candidate.find({}, { _id: 0 });
+  const candidates = await Candidate.find({});
 
   // Retornar un estatus 200 y los datos de los candidatos
   res.status(200).json({ status: "Succeeded", data: candidates, error: null });
