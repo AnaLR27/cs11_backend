@@ -1,11 +1,19 @@
+/**
+ * @file auth.controller.js
+ * @description This file contains the controller for the routes in auth.routes.js
+  */
+
 const Login = require("../models/auth.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 
-// @desc Create new user
-// @route POST /signup
-// @access Private
+/**
+ * @desc Create new user
+ * @route POST /signup
+ * @access Private
+ * @author Alina Dorosh
+ */
 
 const createNewUser = asyncHandler(async (req, res) => {
   const { email, password, role, userName } = req.body;
@@ -13,16 +21,6 @@ const createNewUser = asyncHandler(async (req, res) => {
   // Confirm data
   if (!userName || !password || !role || !email) {
     return res.status(400).json({ message: "All fields are required" });
-  }
-  // Check for duplicate email
-  const duplicate = await Login.findOne({ email }).lean().exec();
-  if (duplicate) {
-    return res.status(409).json({
-      status: "failed",
-      data: null,
-      message: "This email is already registered",
-      error: error.message,
-    });
   }
 
   try {
@@ -53,7 +51,7 @@ const createNewUser = asyncHandler(async (req, res) => {
                 },
               },
               process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "20m" }
+              { expiresIn: "15m" }
             ),
             refreshToken: jwt.sign(
               { email: newUser.email },
@@ -65,7 +63,7 @@ const createNewUser = asyncHandler(async (req, res) => {
         })
       )
       .catch((error) => {
-        if (error.code == 11000 || duplicate) {
+        if (error.code === 11000) {
           return res.status(409).json({
             status: "failed",
             message: "This email is already registered",
@@ -90,10 +88,13 @@ const createNewUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc Login
-// @route POST /auth
-// @access Public
-const login = asyncHandler(async (req, res) => {
+/**
+ * @desc Login
+ * @route POST /auth/login
+ * @access Public
+ * @author Alina Dorosh
+ */
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -121,6 +122,13 @@ const login = asyncHandler(async (req, res) => {
           error: "Wrong email or password",
         });
       if (match) {
+        // Update last login
+        await Login.findOneAndUpdate(
+          {
+            email: foundUser.email, // find by email
+          },
+          { lastLogin: new Date() }
+        );
         const accessToken = jwt.sign(
           {
             UserInfo: {
@@ -130,14 +138,15 @@ const login = asyncHandler(async (req, res) => {
             },
           },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "20m" }
+          { expiresIn: "10m" }
         );
 
         const refreshToken = jwt.sign(
           { email: foundUser.email },
           process.env.REFRESH_TOKEN_SECRET,
-          { expiresIn: "20m" }
+          { expiresIn: "7d" }
         );
+
         // Send accessToken and refreshToken
         res.json({
           accessToken,
@@ -154,39 +163,23 @@ const login = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
-});
-// @desc updateUser
-// @route PATCH /auth/login/:id
-// @access Private
+};
 
-const updateUser = asyncHandler(async (req, res) => {
-  const foundUser = await Login.findByIdAndUpdate(
-    req.params.id,
-    req.body.password
-      ? { ...req.body, password: await bcrypt.hash(req.body.password, 10) }
-      : req.body,
-    {
-      new: true,
-    }
-  );
-
-  if (!foundUser) return res.status(401).json({ message: "Unauthorized" });
-
-  res.status(200).json({ status: "succeeded", foundUser, error: null });
-});
-
-// @desc Refresh
-// @route GET /auth/refresh
-// @access Public - because access token has expired
+/**
+ * @desc Refresh
+ * @route GET /auth/refresh
+ * @access Public - because access token has expired
+ * @author Alina Dorosh
+ */
 const refresh = (req, res) => {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
+  const refreshToken = req.headers["auth-token"];
+   if (!refreshToken)
+    return res.status(401).json({ message: "Unauthorized" });
 
-  if (!authHeader) return res.status(401).json({ message: "Unauthorized" });
-
-  const refreshToken = authHeader.split(" ")[1];
   jwt.verify(
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
+
     asyncHandler(async (err, decoded) => {
       if (err) return res.status(403).json({ message: "Forbidden" });
 
@@ -216,6 +209,7 @@ const refresh = (req, res) => {
 // @Desc Cambiar la contraseña
 // @Route PATCH /auth/changePassword/:id
 // @Acceso Privado
+// @Autor Nelson Gonzalez
 const changePassword = asyncHandler(async (req, res) => {
   // Recuperar la antigua contraseña y la nueva contraseña del cuerpo de la solicitud
   const { oldPassword, newPassword } = req.body;
@@ -264,3 +258,5 @@ module.exports = {
   refresh,
   changePassword,
 };
+
+
