@@ -1,6 +1,6 @@
-**
+/**
  * @fileoverview routes for the login, signup refresh token ang changing password
-  */
+ */
 
 const express = require("express");
 const router = express.Router();
@@ -11,7 +11,7 @@ const {
   changePassword,
 } = require("../controllers/auth.controller");
 
-const loginLimiter = require("../middleware/loginLimiter");
+const loginLimiter = require("../middlewares/loginLimiter");
 
 const verifyToken = require("../middlewares/verifyToken");
 

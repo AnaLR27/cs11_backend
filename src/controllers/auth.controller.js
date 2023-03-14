@@ -254,7 +254,6 @@ const changePassword = asyncHandler(async (req, res) => {
 module.exports = {
   createNewUser,
   login,
-  updateUser,
   refresh,
   changePassword,
 };
