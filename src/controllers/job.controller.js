@@ -1,5 +1,6 @@
 const jwt_decode = require("jwt-decode");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const Job = require("../models/job.model.js");
@@ -44,7 +45,8 @@ const getEmployerJobsByLoginId = async (req, res) => {
 
     // Buscar todas las ofertas de trabajo de la compañía
     const jobs = await Job.find(
-      {},
+      {company: { $eq: req.params.loginId },
+    },
       {
         company: 1,
         companyName: 1,
@@ -412,8 +414,50 @@ const removeJobApplication = async (req, res) => {
       data: null,
       error: error.message,
     });
-  }
-};
+  }}
+
+    // Envio de correo de aprobación/rechazo de oferta de trabajo
+
+    const email = async (req, res) => {
+
+      const toSend = {
+        email: req.body.email,
+        name: req.body.name,
+        job: req.body.job,
+        acepted: req.body.acepted,
+        refused: req.body.refused,
+      }
+
+      try{
+        const config = {
+          host: "smtp.gmail.com",
+          port: 587,
+          auth: {
+            user: "laughingoutloud90@gmail.com",
+            pass: "xwnmvqzcrgaykdip",
+          },
+          tls: {
+            rejectUnauthorized: false,
+          },
+        };
+        let msg = {
+          from: '"Codejobs" <codejobs@example.com>',
+          to: toSend.email,
+          subject: "Oferta de trabajo codejobs",
+          text: `Hola ${toSend.name}, te informamos que tu solicitud para el puesto ${toSend.job} ha sido ${toSend.acepted ? toSend.acepted : toSend.refused}. Comunicate con administración de codespace para obener más información.`,
+        };
+    
+        const transport = nodemailer.createTransport(config);
+        let info = await transport.sendMail(msg);
+        res.send("Email sent");
+      }catch(error){
+        return res
+        .status(404)
+        .json({ status: "failed", data: null, error: error.message });
+      }
+  };
+
+
 
 module.exports = {
   getAllJobs,
@@ -425,4 +469,5 @@ module.exports = {
   getJobList,
   createJob,
   getJobByJobId,
+  email,
 };

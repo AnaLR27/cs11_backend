@@ -1,38 +1,60 @@
-const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-mongoose.set("strictQuery", true);
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const dotenv = require('dotenv');
+mongoose.set('strictQuery', true);
 
-const mongoString = 'mongodb+srv://lauraC:987@codeproject.g2wzn5i.mongodb.net/codeproject'
-// Conectar con la BBDD
-mongoose.connect(mongoString, { useNewUrlParser: true });
-// Guardar la conexion
-const db = mongoose.connection;
+// Importacion de Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
-// Verificar si la conexion ha sido exitosa. Ocurre en cada recarga
-db.on("error", (error) => {
-  console.log(error);
-});
-// Se ejecuta una vez,cuando se conecta a la BBDD
-db.once("connected", () => {
-  console.log("Succesfully connected");
-});
-// Recibir una notificacion cuando al conexion se ha cerrado.
-db.on("disconnected", () => {
-  console.log("mongoose default, connection is discconected");
-});
+// Importar middlewares de log y manejo de errores
+const { logger, logEvents } = require('./src/middlewares/logger');
+const errorHandler = require('./src/middlewares/errorHandler');
 
-// Importacion de controlador
-const candidates = require("./src/controllers/candidate.controller");
-//Crear la app
+// Configurar variables de entorno
+require('dotenv').config();
+
+// Crear aplicación de Express
 const app = express();
-//Analizar los archivos json
-app.use(express.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("/candidates", candidates);
-
+// Habilitar CORS
 app.use(cors());
 
-app.listen(8000, () => {
-  console.log("server running", "http://localhost:" + 8000);
+// Conectarse a la base de datos de MongoDB
+mongoose.connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+});
+
+// Verificar la conexión a la base de datos
+const db = mongoose.connection;
+db.on('error', (err) => {
+    console.log(err);
+    logEvents(
+        `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+        'mongoErrLog.log',
+    );
+});
+// Configurar middleware para recibir y enviar JSON
+app.use(express.json());
+
+//Definir rutas de autenticación
+app.use(logger);
+app.use('/auth', require('./src/routes/auth.routes'));
+app.use(errorHandler);
+
+// Definir rutas de jobs
+app.use('/job', require('./src/routes/job.routes'));
+
+// Definir rutas de candidates
+app.use('/candidate', require('./src/routes/candidate.routes'));
+
+// Definir rutas de employers
+app.use('/employer', require('./src/routes/employer.routes'));
+
+// Escuchar peticiones en el puerto especificado en el puerto 8000
+const port = 8000;
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
