@@ -88,7 +88,7 @@ const jobSchema = new Schema({
     type: Number,
     required: true,
   },
-  specialty: {
+  specialtyJob: {
     type: String,
     required: true,
     enum: [
