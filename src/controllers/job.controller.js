@@ -526,13 +526,6 @@ const deleteCandidateAppliedJobs = async (req, res) => {
       });
     }
 
-    // Delete the candidate from the applicants array of the job
-    const updatedJob = await Job.findOneAndUpdate(
-      { _id: jobId },
-      { $pull: { applicants: { applicantId: loginId } } },
-      { new: true }
-    );
-
     // Find the candidate and check if it exists
     const candidate = await Candidate.findOne({ loginId: loginId });
     if (!candidate) {
@@ -542,6 +535,13 @@ const deleteCandidateAppliedJobs = async (req, res) => {
         error: "Candidate not found",
       });
     }
+
+    // Delete the candidate from the applicants array of the job
+    const updatedJob = await Job.findOneAndUpdate(
+      { _id: jobId },
+      { $pull: { applicants: { applicantId: loginId } } },
+      { new: true }
+    );
 
     // Delete the job from the appliedJobs array of the candidate
     const updatedCandidate = await Candidate.findOneAndUpdate(
