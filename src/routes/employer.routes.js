@@ -1,13 +1,23 @@
 /**
- * @author 'VeróniKa Sánchez'
- * @modified
+ * @author VeróniKa Sánchez
+ * @modified Alina Dorosh
  */
 const express = require('express');
 const router = express.Router();
-const EmployerController = require('../controllers/employer.controller');
-const controller = new EmployerController();
 
-/* Image upload */
+const verifyToken = require('../middlewares/verifyToken');
+
+// seria bueno tener el middleware para checkear el rol en el back tambien
+//const  checkRole = require("../middlewares/checkRole");//
+
+const {
+    getById,
+    createOne,
+    updateById,
+    uploadLogo,
+    downloadLogo,
+} = require('../controllers/employer.controller');
+// Image upload
 const multer = require('multer');
 //upload settings
 const storage = multer.diskStorage({
@@ -22,14 +32,15 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage });
 
 //Routes
-router.get('/employer/:id', controller.getById.bind(controller));
-router.post('/employer', controller.createOne.bind(controller));
-router.patch('/employer/:id', controller.updateById.bind(controller));
-router.get('/employer/logo/:file', controller.downloadLogo.bind(controller));
+router.get('/employer/:id', verifyToken, getById);
+router.post('/employer', verifyToken, createOne);
+router.patch('/employer/:id', verifyToken, updateById);
+router.get('/employer/logo/:file', downloadLogo);
 router.post(
     '/employer/:employerId/logo',
+    verifyToken,
     [uploads.single('file0')],
-    controller.uploadLogo.bind(controller),
+    uploadLogo,
 );
 
 module.exports = router;
