@@ -19,7 +19,6 @@ router.route("/:loginId/watchlist").post(verifyToken, addToWatchlist);
 router.post("/files/:loginId", fileUpload, (req, res) => {
   // Modificamos en BBDD
   modifyCandidate(req.params.loginId, req.file.path);
-
   res.send("Archivo guardado!!");   
 });
 
