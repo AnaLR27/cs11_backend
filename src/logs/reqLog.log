@@ -3248,3 +3248,12 @@
 20230314	18:38:24	da323263-f969-469f-a23b-db7ab92fe01e	GET	/candidate/all-candidates	http://localhost:3000
 20230314	18:38:24	8a774c16-771d-4a08-b64b-e97d012fa290	GET	/job/employer-jobs/63f2d8278c35bcc919b2c899	http://localhost:3000
 20230314	18:38:24	d92bfe7c-68f2-411e-9c4b-77c44ac382e8	GET	/candidate/all-candidates	http://localhost:3000
+20230315	21:38:45	34539f32-7413-4ca4-997d-c6d6087a55b9	POST	/send-mail	undefined
+20230315	21:43:39	640e208c-c474-4d74-ba36-31928a7a8d11	POST	/forgotten-password/send-mail	undefined
+20230315	21:47:34	ccea6afc-186a-4fef-a140-9ed213c65f81	POST	/forgotten-password/send-mail	undefined
+20230316	09:41:06	bb5e83b2-05da-41c9-9a8e-d6b74f6079df	POST	/auth/signup	undefined
+20230316	09:43:05	68a4bee5-be3b-4e3d-b30d-f63f748514ed	POST	/forgotten-password/send-mail	undefined
+20230316	09:45:58	2b5b50b0-2091-4106-89e6-2e4de518eb46	PATCH	/forgotten-password/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZvdmlkYTMxMzdAbmVja3RhaS5jb20iLCJpYXQiOjE2Nzg5NTYxODUsImV4cCI6MTY3ODk1OTc4NX0.B7WoxcuaHH5W3grKKn399iKj1WxTdj2ebooo4a_Jy7Y	undefined
+20230316	09:46:39	f2953392-d84f-4d69-bcf3-d54413382908	PATCH	/forgotten-password/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZvdmlkYTMxMzdAbmVja3RhaS5jb20iLCJpYXQiOjE2Nzg5NTYxODUsImV4cCI6MTY3ODk1OTc4NX0.B7WoxcuaHH5W3grKKn399iKj1WxTdj2ebooo4a_Jy7Y	undefined
+20230316	09:48:16	a07a9505-1e85-4887-8529-d6a230f69029	POST	/auth/signup	undefined
+20230316	09:48:28	54072f73-cee0-4360-bf4a-06c8eb388124	POST	/auth/login	undefined
