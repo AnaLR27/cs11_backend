@@ -1,7 +1,7 @@
 /**
  * @file auth.controller.js
  * @description This file contains the controller for the routes in auth.routes.js
-  */
+ */
 
 const Login = require("../models/auth.model");
 const bcrypt = require("bcrypt");
@@ -51,7 +51,10 @@ const createNewUser = asyncHandler(async (req, res) => {
                 },
               },
               process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "15m" }
+              {
+                expiresIn:
+                  process.env.NODE_ENV === "development" ? "1d" : "15m",
+              }
             ),
             refreshToken: jwt.sign(
               { email: newUser.email },
@@ -138,7 +141,7 @@ const login = async (req, res) => {
             },
           },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "10m" }
+          { expiresIn: process.env.NODE_ENV === "development" ? "1d" : "15m" }
         );
 
         const refreshToken = jwt.sign(
@@ -173,8 +176,7 @@ const login = async (req, res) => {
  */
 const refresh = (req, res) => {
   const refreshToken = req.headers["auth-token"];
-   if (!refreshToken)
-    return res.status(401).json({ message: "Unauthorized" });
+  if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
 
   jwt.verify(
     refreshToken,
@@ -257,5 +259,3 @@ module.exports = {
   refresh,
   changePassword,
 };
-
-

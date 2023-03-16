@@ -21,18 +21,15 @@
 |[express-async-handler](https://www.npmjs.com/package/express-async-handler)|Middleware for robust handling of asynchronous functions|
 |[express-rate-limit](https://www.npmjs.com/package/express-rate-limit)|Used for create middleware with"login limiter" functionality in order to stop brute force attacks and optimize application performance by limiting the number of login attempts.|
 |[mongoose](https://www.npmjs.com/package/mongoose)|A JavaScript object-oriented programming library that creates a connection between MongoDB and the Node.js JavaScript runtime environment|
+|[nodemailer](https://www.npmjs.com/package/nodemailer)|Email sending from NodeJS application|
 
 ## **PROJECT LAYOUT**
 ```
 src
  ┣ controllers
- ┃ ┗ auth.controller.js
  ┣ middlewares
- ┃ ┗ loginLimiter.js
  ┣ models
- ┃ ┗ auth.model.js
  ┣ routes
- ┃ ┗ auth.routes.js
  ┣ uploads
  ┗ utils
 ```
@@ -41,6 +38,11 @@ src
   - auth/signup
   - auth/login
   - auth/refresh
+
+  **Forgotten password routes**
+
+  - forgotten-password/send-mail
+  - forgotten-password/reset-password/:token
 
  ## **MODELS**
  - *Auth model* - ccontains the register schema with necessary validation prior to saving into the database.
@@ -54,6 +56,12 @@ src
 
 
 - *refresh* - checking the refresh token in the request headers. Returns a new access token in order to improve user experience and avoid making the user restart their session when the access token has expired.
+
+**Forgotten password controllers:**
+
+- *sendMail* - sends email with link which redirects to reset passord view in frontene application adding a token for email verification
+
+- *resetPassword* -verifies recieved token and decodes it, and only if email encrypted in the payload of token exists in database allows set new password.
 
 ## **CONTRIBUTORS**
 

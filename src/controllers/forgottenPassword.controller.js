@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Controllers for forgotten password
+ * @author Alina Dorosh
+ */
+
 const jwt_decode = require("jwt-decode");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -5,6 +10,13 @@ const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
 const Login = require("../models/auth.model");
 
+/**
+ * @description Send email with link and token to reset password
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {Object} - Returns an object with message
+ * @route POST /forgotten-password/send-mail
+*/
 const sendMail = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const token = jwt.sign({ email }, process.env.JWT_SECRET, {
@@ -47,6 +59,14 @@ const sendMail = asyncHandler(async (req, res) => {
   });
 });
 
+
+/**
+ * @description Reset password controller
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {Object} - Returns an object with message
+ * @route PATCH /forgotten-password/reset-password/:token
+ */
 const resetPassword = asyncHandler(async (req, res) => {
   const { newPassword } = req.body;
   const { token } = req.params;
