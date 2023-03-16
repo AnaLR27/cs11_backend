@@ -45,8 +45,7 @@ const getEmployerJobsByLoginId = async (req, res) => {
 
     // Buscar todas las ofertas de trabajo de la compañía
     const jobs = await Job.find(
-      {company: { $eq: req.params.loginId },
-    },
+      { company: { $eq: req.params.loginId } },
       {
         company: 1,
         companyName: 1,
@@ -94,7 +93,7 @@ const removeJobByLoginIdAndJobId = async (req, res) => {
     const loginId = req.params.loginId;
     const jobId = req.params.jobId;
 
-    console.log(jobId)
+    console.log(jobId);
     // Verificar que el empleador loggeado es el dueño del trabajo
     const job = await Job.findOne({ loginId, _id: jobId });
     if (!job) {
@@ -113,7 +112,6 @@ const removeJobByLoginIdAndJobId = async (req, res) => {
         data: null,
       });
     }
-
 
     // Eliminar el trabajo
     const deletedJob = await Job.findOneAndDelete({
@@ -141,7 +139,6 @@ const removeJobByLoginIdAndJobId = async (req, res) => {
   }
 };
 
-
 // @Desc Editar un trabajo de un determinado empleador por su loginId y jobId
 // @Route PUT /job/edit-job/:loginId/:jobId
 // @Access Privado
@@ -159,7 +156,7 @@ const updateJobByLoginIdAndJobId = async (req, res) => {
     // Comprobar que el loginId del token coincide con el loginId de la ruta
     if (decodedToken.UserInfo.id !== loginId) {
       return res.status(401).json({
-        status : "Failed",
+        status: "Failed",
         message: "No tienes permiso para editar este trabajo",
         data: null,
       });
@@ -174,7 +171,7 @@ const updateJobByLoginIdAndJobId = async (req, res) => {
     // Comprobar que el trabajo existe
     if (!job) {
       return res.status(400).json({
-        status : "Failed",
+        status: "Failed",
         message: "No se encontró la información del trabajo",
         data: null,
       });
@@ -322,7 +319,9 @@ const getJobByJobId = async (req, res) => {
 const getJobsAppliedByLoginId = async (req, res) => {
   try {
     const loginId = req.params.loginId;
-    const candidate = await Candidate.findOne({ loginId }).populate('appliedJobs');
+    const candidate = await Candidate.findOne({ loginId }).populate(
+      "appliedJobs"
+    );
     const jobs = candidate.appliedJobs;
 
     console.log(candidate);
@@ -414,50 +413,155 @@ const removeJobApplication = async (req, res) => {
       data: null,
       error: error.message,
     });
-  }}
+  }
+};
 
-    // Envio de correo de aprobación/rechazo de oferta de trabajo
+// Envio de correo de aprobación/rechazo de oferta de trabajo
 
-    const email = async (req, res) => {
-
-      const toSend = {
-        email: req.body.email,
-        name: req.body.name,
-        job: req.body.job,
-        acepted: req.body.acepted,
-        refused: req.body.refused,
-      }
-
-      try{
-        const config = {
-          host: "smtp.gmail.com",
-          port: 587,
-          auth: {
-            user: "laughingoutloud90@gmail.com",
-            pass: "xwnmvqzcrgaykdip",
-          },
-          tls: {
-            rejectUnauthorized: false,
-          },
-        };
-        let msg = {
-          from: '"Codejobs" <codejobs@example.com>',
-          to: toSend.email,
-          subject: "Oferta de trabajo codejobs",
-          text: `Hola ${toSend.name}, te informamos que tu solicitud para el puesto ${toSend.job} ha sido ${toSend.acepted ? toSend.acepted : toSend.refused}. Comunicate con administración de codespace para obener más información.`,
-        };
-    
-        const transport = nodemailer.createTransport(config);
-        let info = await transport.sendMail(msg);
-        res.send("Email sent");
-      }catch(error){
-        return res
-        .status(404)
-        .json({ status: "failed", data: null, error: error.message });
-      }
+const email = async (req, res) => {
+  const toSend = {
+    email: req.body.email,
+    name: req.body.name,
+    job: req.body.job,
+    acepted: req.body.acepted,
+    refused: req.body.refused,
   };
 
+  try {
+    const config = {
+      host: "smtp.gmail.com",
+      port: 587,
+      auth: {
+        user: "laughingoutloud90@gmail.com",
+        pass: "xwnmvqzcrgaykdip",
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    };
+    let msg = {
+      from: '"Codejobs" <codejobs@example.com>',
+      to: toSend.email,
+      subject: "Oferta de trabajo codejobs",
+      text: `Hola ${
+        toSend.name
+      }, te informamos que tu solicitud para el puesto ${toSend.job} ha sido ${
+        toSend.acepted ? toSend.acepted : toSend.refused
+      }. Comunicate con administración de codespace para obener más información.`,
+    };
 
+    const transport = nodemailer.createTransport(config);
+    let info = await transport.sendMail(msg);
+    res.send("Email sent");
+  } catch (error) {
+    return res
+      .status(404)
+      .json({ status: "failed", data: null, error: error.message });
+  }
+};
+
+// @Desc: This function gets all the jobs that the candidate has applied to, filtering by the loginId of the candidate (for the applied Jobs page)
+// @Route: GET /job/candidate-applied-jobs/:loginId
+// @Access: Private
+const getCandidateAppliedJobs = async (req, res) => {
+  try {
+    const loginId = req.params.loginId;
+    const data = await Job.find(
+      { applicants: { $elemMatch: { applicantId: loginId } } },
+      {
+        location: 1,
+        title: 1,
+        companyName: 1,
+        jobActive: 1,
+        applicants: 1,
+        logo: 1,
+      }
+    );
+
+    res.status(200).json({
+      status: "Succeeded",
+      data,
+      error: null,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "Failed",
+      data: null,
+      error: error.message,
+    });
+  }
+};
+
+// @Desc: This function deletes a candidate from the applicants array of the job and deletes the job from the appliedJobs array of the candidate, using the params loginId and jobId (for the applied Jobs page)
+// @Route: DELETE /job/candidate-applied-jobs/:loginId/:jobId
+// @Access: Private
+
+const deleteCandidateAppliedJobs = async (req, res) => {
+  // Transform the params loginId and jobId to ObjectId
+  const loginId = req.params.loginId;
+  const jobId = req.params.jobId;
+  try {
+    // Find the job and check if it exists
+    const job = await Job.findOne({ _id: jobId });
+
+    if (!job) {
+      return res.status(404).json({
+        status: "Failed",
+        data: null,
+        error: "Job not found",
+      });
+    }
+
+    // Check if the candidate has applied to the job
+    const applicant = job.applicants.findIndex(
+      (applicant) => applicant.applicantId.toString() === loginId
+    );
+
+    if (applicant === -1) {
+      return res.status(404).json({
+        status: "Failed",
+        data: null,
+        error: "Applicant not found for the selected job",
+      });
+    }
+
+    // Find the candidate and check if it exists
+    const candidate = await Candidate.findOne({ loginId: loginId });
+    if (!candidate) {
+      return res.status(404).json({
+        status: "Failed",
+        data: null,
+        error: "Candidate not found",
+      });
+    }
+
+    // Delete the candidate from the applicants array of the job
+    const updatedJob = await Job.findOneAndUpdate(
+      { _id: jobId },
+      { $pull: { applicants: { applicantId: loginId } } },
+      { new: true }
+    );
+
+    // Delete the job from the appliedJobs array of the candidate
+    const updatedCandidate = await Candidate.findOneAndUpdate(
+      { loginId: loginId },
+      { $pull: { appliedJobs: { idJob: jobId } } },
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: "Succeeded",
+      data: "Delete successfully",
+      error: null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Failed",
+      data: null,
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   getAllJobs,
@@ -470,4 +574,6 @@ module.exports = {
   createJob,
   getJobByJobId,
   email,
+  getCandidateAppliedJobs,
+  deleteCandidateAppliedJobs,
 };

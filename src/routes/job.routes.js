@@ -12,6 +12,8 @@ const {
   getEmployerJobsByLoginId,
   removeJobByLoginIdAndJobId,
   email,
+  getCandidateAppliedJobs,
+  deleteCandidateAppliedJobs,
 } = require("../controllers/job.controller");
 const { verify } = require("jsonwebtoken");
 
@@ -46,5 +48,17 @@ router.delete(
 );
 
 router.post("/email", verifyToken, email);
+
+router.get(
+  "/candidate-applied-jobs/:loginId",
+  verifyToken,
+  getCandidateAppliedJobs
+);
+
+router.delete(
+  "/candidate-applied-jobs/:loginId/:jobId",
+  verifyToken,
+  deleteCandidateAppliedJobs
+);
 
 module.exports = router;
