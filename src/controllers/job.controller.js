@@ -1,7 +1,6 @@
 const jwt_decode = require("jwt-decode");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const ObjectId = require("bson").ObjectId;
 require("dotenv").config();
 
 const Job = require("../models/job.model.js");
@@ -466,7 +465,7 @@ const email = async (req, res) => {
 // @Access: Private
 const getCandidateAppliedJobs = async (req, res) => {
   try {
-    const loginId = new ObjectId(req.params.loginId);
+    const loginId = req.params.loginId;
     const data = await Job.find(
       { applicants: { $elemMatch: { applicantId: loginId } } },
       {
@@ -499,8 +498,8 @@ const getCandidateAppliedJobs = async (req, res) => {
 
 const deleteCandidateAppliedJobs = async (req, res) => {
   // Transform the params loginId and jobId to ObjectId
-  const loginId = new ObjectId(req.params.loginId);
-  const jobId = new ObjectId(req.params.jobId);
+  const loginId = req.params.loginId;
+  const jobId = req.params.jobId;
   try {
     // Find the job and check if it exists
     const job = await Job.findOne({ _id: jobId });
@@ -514,8 +513,8 @@ const deleteCandidateAppliedJobs = async (req, res) => {
     }
 
     // Check if the candidate has applied to the job
-    const applicant = job.applicants.findIndex((applicant) =>
-      applicant.applicantId.equals(loginId)
+    const applicant = job.applicants.findIndex(
+      (applicant) => applicant.applicantId.toString() === loginId
     );
 
     if (applicant === -1) {
