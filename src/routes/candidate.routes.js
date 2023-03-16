@@ -40,16 +40,16 @@ router.post('/files/:loginId', fileUpload, (req, res) => {
 });
 
 // Candidate routes
-router.get('/:id', verifyToken, getById);
-router.post('/', verifyToken, createOne);
-router.patch('/:id', verifyToken, updateById);
+router.get('/candidate/:id', verifyToken, getById);
+router.post('/candidate', verifyToken, createOne);
+router.patch('/candidate/:id', verifyToken, updateById);
 // Candidate image routes
 router.post(
-	'/:candidateId/photo',
+	'/candidate/:candidateId/photo',
 	verifyToken,
 	[uploads.single('file0')],
 	uploadPhoto,
 );
-router.get('/photo/:file', downloadPhoto);
+router.get('/candidate/photo/:file', downloadPhoto);
 
 module.exports = router;
