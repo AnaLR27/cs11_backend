@@ -1,16 +1,54 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const verifyToken = require("../middlewares/verifyToken");
+const verifyToken = require('../middlewares/verifyToken');
+const multer = require('multer');
 const {
-  getCandidateByLoginId,
-  getAllCandidates,
-  addToWatchlist,
-} = require("../controllers/candidate.controller");
+	getCandidateByLoginId,
+	getAllCandidates,
+	addToWatchlist,
+	fileUpload,
+	getById,
+	createOne,
+	updateById,
+	uploadPhoto,
+	downloadPhoto,
+} = require('../controllers/candidate.controller');
 
-router.route("/all-candidates").get(verifyToken, getAllCandidates);
+const storage = multer.diskStorage({
+	destination: (_req, file, cb) => {
+		cb(null, './src/uploads/photos/');
+	},
+	filename: (_req, file, cb) => {
+		cb(null, 'photo-' + Date.now() + '-' + file.originalname);
+	},
+});
 
-router.route("/:loginId").get(verifyToken, getCandidateByLoginId);
+const uploads = multer({ storage });
 
-router.route("/:loginId/watchlist").post(verifyToken, addToWatchlist);
+router.route('/candidate/all-candidates').get(verifyToken, getAllCandidates);
+
+router.route('/candidate/:loginId').get(verifyToken, getCandidateByLoginId);
+
+router.route('/candidate/:loginId/watchlist').post(verifyToken, addToWatchlist);
+
+// Recibir documento por POST
+router.post('/candidate/files/:loginId', fileUpload, (req, res) => {
+	// Modificamos en BBDD
+	modifyCandidate(req.params.loginId, req.file.path);
+	res.send('Archivo guardado!!');
+});
+
+// Candidate routes
+router.get('/candidate/:id', verifyToken, getById);
+router.post('/candidate', verifyToken, createOne);
+router.patch('/candidate/:id', verifyToken, updateById);
+// Candidate image routes
+router.post(
+	'/candidate/:candidateId/photo',
+	verifyToken,
+	[uploads.single('file0')],
+	uploadPhoto,
+);
+router.get('/candidate/photo/:file', downloadPhoto);
 
 module.exports = router;
