@@ -123,7 +123,7 @@ const updateById = async (req, res) => {
 const deleteById = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { loginId, photo, resume } = await EmployerModel.findById({
+		const { loginId, logo } = await EmployerModel.findById({
 			_id: id,
 		}).exec();
 		// Detele user data
@@ -132,14 +132,9 @@ const deleteById = async (req, res) => {
 			// Delete login data
 			await Auth.deleteOne({ _id: loginId });
 			// Delete user image
-			if (photo) {
-				const photoPath = './src/uploads/photos/' + photo;
-				fs.unlinkSync(photoPath);
-			}
-			// Delete use resume
-			if (resume) {
-				const filePath = './src/uploads/files/' + resume;
-				fs.unlinkSync(filePath);
+			if (logo) {
+				const logoPath = './src/uploads/logos/' + logo;
+				fs.unlinkSync(logoPath);
 			}
 			res
 				.status(200)
@@ -259,6 +254,7 @@ module.exports = {
 	getById,
 	createOne,
 	updateById,
+  deleteById,
 	uploadLogo,
 	downloadLogo,
 };
