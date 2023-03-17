@@ -2,25 +2,25 @@
  * @fileoverview routes for the login, signup refresh token ang changing password
  */
 
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 const {
-  createNewUser,
-  login,
-  refresh,
-  changePassword,
-} = require("../controllers/auth.controller");
+	createNewUser,
+	login,
+	refresh,
+	changePassword,
+} = require('../controllers/auth.controller');
 
-const loginLimiter = require("../middlewares/loginLimiter");
+const loginLimiter = require('../middlewares/loginLimiter');
 
-const verifyToken = require("../middlewares/verifyToken");
+const verifyToken = require('../middlewares/verifyToken');
 
-router.route("/signup").post(createNewUser);
+router.route('/auth/signup').post(createNewUser);
 
-router.route("/login").post(loginLimiter, login);
+router.route('/auth/login').post(loginLimiter, login);
 
-router.route("/refresh").get(refresh);
+router.route('/auth/refresh').get(refresh);
 
-router.route("/changePassword/:id").patch(verifyToken, changePassword);
+router.route('/auth/changePassword/:id').patch(verifyToken, changePassword);
 
 module.exports = router;
