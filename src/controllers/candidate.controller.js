@@ -14,7 +14,11 @@ const getAllCandidates = async (req, res) => {
 	const candidates = await Candidate.find({});
 
 	// Retornar un estatus 200 y los datos de los candidatos
-	res.status(200).json({ status: 'Succeeded', data: candidates, error: null });
+	res.status(200).json({
+		status: 'Succeeded',
+		data: candidates,
+		error: null,
+	});
 };
 
 // @Desc Obtener un candidato por su loginId
@@ -201,7 +205,7 @@ const getById = async (req, res) => {
 		console.log(error);
 		return res
 			.status(500)
-			.json({ status: 'failed', data: undefined, error: error.message });
+			.json({ status: 'failed', data: null, error: error.message });
 	}
 };
 
