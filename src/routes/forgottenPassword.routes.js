@@ -7,7 +7,7 @@ const express = require("express");
 const router = express.Router();
 const { sendMail,resetPassword } = require("../controllers/forgottenPassword.controller");
 
-router.post("/send-mail", sendMail);
-router.patch("/reset-password/:token", resetPassword);
+router.post("/forgotten-password/send-mail", sendMail);
+router.patch("/forgotten-password/reset-password/:token", resetPassword);
 
 module.exports = router;

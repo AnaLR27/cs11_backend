@@ -41,20 +41,20 @@ app.use(express.json());
 
 //Definir rutas de autenticación
 app.use(logger);
-app.use('/auth', require('./src/routes/auth.routes'));
+app.use('/', require('./src/routes/auth.routes'));
 app.use(errorHandler);
 
 // Definir rutas de jobs
-app.use('/job', require('./src/routes/job.routes'));
+app.use('/', require('./src/routes/job.routes'));
 
 // Definir rutas de candidates
-app.use('/candidate', require('./src/routes/candidate.routes'));
+app.use('/', require('./src/routes/candidate.routes'));
 
 // Definir rutas de employers
-app.use('/employer', require('./src/routes/employer.routes'));
+app.use('/', require('./src/routes/employer.routes'));
 
 // Definir rutas de forgotten password
-app.use('/forgotten-password', require('./src/routes/forgottenPassword.routes'));
+app.use('/', require('./src/routes/forgottenPassword.routes'));
 
 // Escuchar peticiones en el puerto especificado en el puerto 8000
 const port = 8000;
