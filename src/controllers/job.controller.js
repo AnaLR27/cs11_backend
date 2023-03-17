@@ -26,46 +26,31 @@ const getAllJobs = async (req, res) => {
   }
 };
 
-// @Desc Obtener todos los trabajos de un empleador por su loginId
+// @Desc Obtener trabajos por loginId
 // @Route GET /job/employer-jobs/:loginId
 // @Access Privado
 const getEmployerJobsByLoginId = async (req, res) => {
   try {
-    //Obtener el id del token
-    const authHeader = req.header("auth-token") || req.header("Auth-token");
-    const token = authHeader;
-
-    const decodedToken = jwt_decode(token);
     const loginId = req.params.loginId;
-
-    // Buscar la información de la compañía
-    const company = await Employer.findOne({
-      loginId,
-    });
-
-    // Buscar todas las ofertas de trabajo de la compañía
-    const jobs = await Job.find(
-      { company: { $eq: req.params.loginId } },
-      {
-        company: 1,
-        companyName: 1,
-        title: 1,
-        jobType: 1,
-        logo: 1,
-        _id: 1,
-        location: 1,
-        applicants: 1,
-        createdAt: 1,
-      }
+    // Buscar el employer usando el loginId
+    const employer = await Employer.findOne({ loginId });
+    console.log(employer);
+    // Si el employer no se encuentra, retornar un estatus 404 y un mensaje de error
+    if (!employer) {
+      return res.status(404).json({
+        status: "Failed",
+        data: null,
+        error: `No se encontró el employer con el loginId ${loginId}`,
+      });
+    }
+    // Obtener los trabajos de la empresa y retornar un estatus 200 con la lista de trabajos
+    const jobs = await Job.find({ company: employer.loginId }).populate(
+      "company"
     );
-    console.log(jobs);
-
-    // Retornar un estatus 200 y los datos de las ofertas de trabajo
     res.status(200).json({ status: "Succeeded", data: jobs, error: null });
   } catch (error) {
-    // Si hay un error en la búsqueda, retornar un estatus 404 y un mensaje de error
     res
-      .status(404)
+      .status(500)
       .json({ status: "Failed", data: null, error: error.message });
   }
 };
