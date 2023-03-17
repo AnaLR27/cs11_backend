@@ -1,8 +1,10 @@
 const Candidate = require('../models/candidate.model');
+const Auth = require('../models/auth.model');
 const jwt_decode = require('jwt-decode');
 const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
+const fs = require('fs');
 
 // @Desc Obtener todos los candidatos
 // @Route GET /candidate/all-candidates
@@ -170,8 +172,8 @@ const modifyCandidate = async (loginId, pathFile) => {
 
 /**
  * Function to get candidate data by id.
- * @param { Request } req request data
- * @param { Response } res response data
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
  * @returns The response json object with the corresponding data.
  * @access private
  * @route [GET] - /candidate
@@ -199,14 +201,14 @@ const getById = async (req, res) => {
 		console.log(error);
 		return res
 			.status(500)
-			.json({ status: 'failed', data: null, error: error.message });
+			.json({ status: 'failed', data: undefined, error: error.message });
 	}
 };
 
 /**
  * Function to create one candidate.
- * @param { Request } req request data
- * @param { Response } res response data
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
  * @returns The response json object with the corresponding data.
  * @access private
  * @route [POST] - /candidate/:id
@@ -232,14 +234,14 @@ const createOne = async (req, res) => {
 		console.log(error);
 		return res
 			.status(500)
-			.json({ status: 'failed', data: null, error: error.message });
+			.json({ status: 'failed', data: undefined, error: error.message });
 	}
 };
 
 /**
  * Function to update candidate data.
- * @param { Request } req request data
- * @param { Response } res response data
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
  * @returns The response json object with the corresponding data.
  * @access private
  * @route [PATH] - /candidate/:candidateId/photo
@@ -271,14 +273,57 @@ const updateById = async (req, res) => {
 		console.log(error);
 		return res
 			.status(500)
-			.json({ status: 'failed', data: null, error: error.message });
+			.json({ status: 'failed', data: undefined, error: error.message });
+	}
+};
+/**
+ * Function to delete an user by id.
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
+ * @returns Json object with status, data and error.message.
+ * @access private
+ * @route [POST] - /candidate/:candidateId/
+ */
+const deleteById = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { loginId, photo, resume } = await Candidate.findById({
+			_id: id,
+		}).exec();
+		// Detele user data
+		const deleteUserEntry = await Candidate.deleteOne({ _id: id });
+		if (deleteUserEntry) {
+			// Delete login data
+			await Auth.deleteOne({ _id: loginId });
+			// Delete user image
+			if (photo) {
+				const photoPath = './src/uploads/photos/' + photo;
+				fs.unlinkSync(photoPath);
+			}
+			// Delete use resume
+			if (resume) {
+				const filePath = './src/uploads/files/' + resume;
+				fs.unlinkSync(filePath);
+			}
+			res
+				.status(200)
+				.json({ status: 'success', data: undefined, error: error.message });
+		} else {
+			res
+				.status(404)
+				.json({ status: 'not_found', data: undefined, error: error.message });
+		}
+	} catch (error) {
+		res
+			.status(500)
+			.json({ status: 'failed', data: undefined, error: error.message });
 	}
 };
 
 /**
  * Function to upload an image file from candidate form record by id or loginId.
- * @param { Request } req request data
- * @param { Response } res response data
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
  * @returns Image file.
  * @access private
  * @route [POST] - /candidate/:candidateId/photo
@@ -337,14 +382,14 @@ const uploadPhoto = async (req, res) => {
 		console.log(error);
 		return res
 			.status(500)
-			.json({ status: 'failed', data: null, error: error.message });
+			.json({ status: 'failed', data: undefined, error: error.message });
 	}
 };
 
 /**
  * Function to download the image.
- * @param { Request } req request data
- * @param { Response } res response data
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
  * @returns Image file.
  * @access private
  * @route [GET] - /candidate/photo/:file
@@ -371,7 +416,7 @@ const downloadPhoto = async (req, res) => {
 		console.log(error);
 		return res
 			.status(500)
-			.json({ status: 'failed', data: null, error: error.message });
+			.json({ status: 'failed', data: undefined, error: error.message });
 	}
 };
 
@@ -384,6 +429,7 @@ module.exports = {
 	getById,
 	createOne,
 	updateById,
+	deleteById,
 	uploadPhoto,
 	downloadPhoto,
 };
