@@ -53,6 +53,9 @@ app.use('/', require('./src/routes/candidate.routes'));
 // Definir rutas de employers
 app.use('/', require('./src/routes/employer.routes'));
 
+// Definir rutas de forgotten password
+app.use('/', require('./src/routes/forgottenPassword.routes'));
+
 // Escuchar peticiones en el puerto especificado en el puerto 8000
 const port = 8000;
 app.listen(port, () => {

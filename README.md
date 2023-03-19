@@ -51,7 +51,7 @@
 
 ## **MODELS**
 
-- _Auth model_ - ccontains the register schema with necessary validation prior to saving into the database.
+- _Auth model_ - contains the register schema with necessary validation prior to saving into the database.
 
 ## **CONTROLLERS**
 
@@ -74,6 +74,16 @@
 | Name             |                      Github                       |                         Linkedin                         |                    Email                    |
 | :--------------- | :-----------------------------------------------: | :------------------------------------------------------: | :-----------------------------------------: |
 | Alina Dorosh     | [**&check;**](https://github.com/AlinaDorosh-dev) | [**&check;**](https://www.linkedin.com/in/alina-dorosh/) | [Contact me](mailto:alina.dorosh@gmail.com) |
+
+ 
+
+
+
+
+
+ 
+
+
 | Rafael Fernandez |    [**&check;**](https://github.com/iRaphiki)     |   [**&check;**](https://www.linkedin.com/in/rafa-fr/)    |  [Contact me](mailto:imraphiki@gmail.com)   |
 |                  |                                                   |                                                          |
 |                  |                                                   |                                                          |
