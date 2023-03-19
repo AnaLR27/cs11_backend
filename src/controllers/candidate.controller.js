@@ -168,7 +168,6 @@ const modifyCandidate = async (loginId, pathFile) => {
         data.resume = pathFile;
         // Guardamos el cambio en el candidato en la base de datos
         await data.save();
-        console.log(data);
     } catch (error) {
         console.error('Ha ocurrido un error con la base de datos: ' + error);
     }
@@ -298,37 +297,45 @@ const updateById = async (req, res) => {
 const deleteById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { _id, loginId, photo, resume } = await Candidate.findOne({
+        const candidate = await Candidate.findOne({
             $or: [{ _id: id }, { loginId: id }],
         }).exec();
         // Detele user data
-        const deleteUserEntry = await Candidate.deleteById(_id);
+        const deleteUserEntry = await Candidate.findByIdAndDelete(
+            candidate._id,
+        );
         if (deleteUserEntry) {
             // Delete login data
-            await Auth.deleteById(loginId);
-            // Delete user image
-            if (photo) {
-                const photoPath = './src/uploads/photos/' + photo;
-                fs.unlinkSync(photoPath);
-            }
-            // Delete use resume
-            if (resume) {
-                const filePath = './src/uploads/files/' + resume;
-                fs.unlinkSync(filePath);
-            }
+            await Auth.findByIdAndDelete(candidate.loginId);
+            try {
+                // Delete use resume
+                if (candidate.resume) {
+                    const filePath = './src/uploads/files/' + candidate.resume;
+                    fs.unlinkSync(filePath);
+                }
+            } catch (err) {}
+            try {
+                // Delete user image
+                if (candidate.photo) {
+                    const photoPath = './src/uploads/photos/' + candidate.photo;
+                    fs.unlinkSync(photoPath);
+                }
+            } catch (err) {}
+
             res.status(200).json({
                 status: 'success',
                 data: undefined,
-                error: error.message,
+                error: null,
             });
         } else {
             res.status(404).json({
                 status: 'not_found',
                 data: undefined,
-                error: error.message,
+                error: null,
             });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             status: 'failed',
             data: undefined,

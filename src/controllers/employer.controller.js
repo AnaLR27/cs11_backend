@@ -131,29 +131,34 @@ const updateById = async (req, res) => {
 const deleteById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { loginId, logo } = await EmployerModel.findById({
-            _id: id,
+        const employer = await EmployerModel.findOne({
+            $or: [{ _id: id }, { loginId: id }],
         }).exec();
         // Detele user data
-        const deleteUserEntry = await EmployerModel.deleteOne({ _id: id });
+        const deleteUserEntry = await EmployerModel.findOneAndDelete(
+            employer._id,
+        );
         if (deleteUserEntry) {
             // Delete login data
-            await Auth.deleteOne({ _id: loginId });
+            await Auth.findByIdAndDelete(employer.loginId);
             // Delete user image
-            if (logo) {
-                const logoPath = './src/uploads/logos/' + logo;
-                fs.unlinkSync(logoPath);
-            }
+            try {
+                if (employer.logo) {
+                    const logoPath = './src/uploads/logos/' + employer.logo;
+                    fs.unlinkSync(logoPath);
+                }
+            } catch (err) {}
+
             res.status(200).json({
                 status: 'success',
                 data: undefined,
-                error: error.message,
+                error: null,
             });
         } else {
             res.status(404).json({
                 status: 'not_found',
                 data: undefined,
-                error: error.message,
+                error: null,
             });
         }
     } catch (error) {
