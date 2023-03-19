@@ -15,7 +15,11 @@ const asyncHandler = require("express-async-handler");
 const getAllJobs = async (req, res) => {
   try {
     // Buscar todas las ofertas de trabajo activas y populadas por la empresa
-    const jobs = await Job.find({ jobActive: true });
+    const jobs = await Job.find({ jobActive: true }).populate({
+      path: "company",
+      select: "logo companyName",
+      model: "Employer",
+    });
     // Enviar una respuesta exitosa con los datos de las ofertas de trabajo
     res.status(200).json({ status: "Succeeded", data: jobs, error: null });
   } catch (error) {
@@ -137,9 +141,10 @@ const updateJobByLoginIdAndJobId = async (req, res) => {
     // Obtener el loginId y el jobId de los parámetros de la ruta
     const jobId = req.params.jobId;
 
-    
     // Actualizar la información del trabajo
-    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {new: true});
+    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {
+      new: true,
+    });
 
     // Enviar una respuesta exitosa con los datos actualizados del trabajo
     res
@@ -196,8 +201,15 @@ const createJob = async (req, res) => {
     const decodedToken = jwt_decode(token);
 
     // Obtener los datos del usuario
-    const { title, description, location, salary, jobType,  workday, jobActive } =
-      req.body;
+    const {
+      title,
+      description,
+      location,
+      salary,
+      jobType,
+      workday,
+      jobActive,
+    } = req.body;
     const createdAt = new Date();
 
     // Buscar la información de la compañía
@@ -604,14 +616,16 @@ const applyToJob = async (req, res) => {
 
     return res.status(200).json({
       status: "Succeeded",
-      message: "Se agregó el candidato a la lista applicants y se agregó el trabajo a la lista appliedJobs",
+      message:
+        "Se agregó el candidato a la lista applicants y se agregó el trabajo a la lista appliedJobs",
       data: null,
     });
   } catch (error) {
     console.log("error", error);
     return res.status(500).json({
       status: "Failed",
-      message: "Error al agregar el candidato a la lista applicants o al agregar el trabajo a la lista appliedJobs",
+      message:
+        "Error al agregar el candidato a la lista applicants o al agregar el trabajo a la lista appliedJobs",
       data: null,
     });
   }
