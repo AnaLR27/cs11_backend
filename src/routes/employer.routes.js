@@ -13,6 +13,7 @@ const {
     updateById,
     uploadLogo,
     downloadLogo,
+    deleteById,
 } = require('../controllers/employer.controller');
 
 /* Image upload */
@@ -33,6 +34,7 @@ const uploads = multer({ storage });
 router.get('/employer/:id', verifyToken, getById);
 router.post('/employer', verifyToken, createOne);
 router.patch('/employer/:id', verifyToken, updateById);
+router.delete('/employer/:id', verifyToken, deleteById);
 router.get('/employer/logo/:file', verifyToken, downloadLogo);
 router.post(
     '/employer/:employerId/logo',
