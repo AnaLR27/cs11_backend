@@ -135,39 +135,11 @@ const updateJobByLoginIdAndJobId = async (req, res) => {
     const decodedToken = jwt_decode(token);
 
     // Obtener el loginId y el jobId de los parámetros de la ruta
-    const loginId = req.params.loginId;
     const jobId = req.params.jobId;
 
-    // Comprobar que el loginId del token coincide con el loginId de la ruta
-    if (decodedToken.UserInfo.id !== loginId) {
-      return res.status(401).json({
-        status: "Failed",
-        message: "No tienes permiso para editar este trabajo",
-        data: null,
-      });
-    }
-
-    // Buscar la información del trabajo a editar
-    const job = await Job.findOne({
-      loginId: loginId,
-      _id: jobId,
-    });
-
-    // Comprobar que el trabajo existe
-    if (!job) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "No se encontró la información del trabajo",
-        data: null,
-      });
-    }
-
+    
     // Actualizar la información del trabajo
-    const updatedJob = await Job.findOneAndUpdate(
-      { loginId: loginId, _id: jobId },
-      { $set: req.body },
-      { new: true }
-    );
+    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {new: true});
 
     // Enviar una respuesta exitosa con los datos actualizados del trabajo
     res
@@ -224,7 +196,7 @@ const createJob = async (req, res) => {
     const decodedToken = jwt_decode(token);
 
     // Obtener los datos del usuario
-    const { title, description, location, salary, jobType, jobActive } =
+    const { title, description, location, salary, jobType,  workday, jobActive } =
       req.body;
     const createdAt = new Date();
 
@@ -249,9 +221,8 @@ const createJob = async (req, res) => {
       jobType,
       jobActive,
       createdAt,
-      company: company.loginId,
-      companyName: company.companyName,
-      logo: company.logo,
+      company: company._id,
+      workDay: workday,
     });
 
     await newJob.save();
@@ -548,6 +519,104 @@ const deleteCandidateAppliedJobs = async (req, res) => {
   }
 };
 
+// @Desc Add a candidate to the applicants array of a job and add the job to the appliedJobs array of the candidate
+// @Route POST /job/job-single/:loginId/:jobId
+// @Access Private
+
+const applyToJob = async (req, res) => {
+  const loginId = req.params.loginId;
+  const jobId = req.params.jobId;
+
+  try {
+    // Check if the job exists
+    const job = await Job.findOne({ _id: jobId });
+
+    if (!job) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "No se encontró la información del trabajo",
+        data: null,
+      });
+    }
+
+    // Check if the candidate exists
+    const candidate = await Candidate.findOne({ loginId: loginId });
+
+    if (!candidate) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "No se encontró la información del candidato",
+        data: null,
+      });
+    }
+
+    // Check if the candidate already exists in the applicants array of the job
+    const applicantExists = await Job.findOne({
+      _id: jobId,
+      "applicants.applicantId": loginId,
+    });
+
+    if (applicantExists) {
+      // if the candidate already exists in the applicants array of the job, update the applicationDate
+      await Job.updateOne(
+        { _id: jobId, "applicants.applicantId": loginId },
+        { $set: { "applicants.$.applicationDate": Date.now() } }
+      );
+    } else {
+      // if the candidate does not exist in the applicants array of the job, add it to the applicants array
+      await Job.findOneAndUpdate(
+        { _id: jobId },
+        {
+          $push: {
+            applicants: { applicantId: loginId, applicationDate: Date.now() },
+          },
+        }
+      );
+    }
+
+    // Check if the job already exists in the appliedJobs list
+    const jobExists = await Candidate.findOne({
+      loginId: loginId,
+      "appliedJobs.idJob": jobId,
+    });
+
+    if (jobExists) {
+      // if the job already exists in the appliedJobs list, update the appliedDate
+      await Candidate.updateOne(
+        { loginId: loginId, "appliedJobs.idJob": jobId },
+        { $set: { "appliedJobs.$.appliedDate": Date.now() } }
+      );
+    } else {
+      // if the job does not exist in the appliedJobs list, add it
+
+      await Candidate.findOneAndUpdate(
+        { loginId: loginId },
+        {
+          $push: {
+            appliedJobs: {
+              idJob: jobId,
+              appliedDate: Date.now(),
+            },
+          },
+        }
+      );
+    }
+
+    return res.status(200).json({
+      status: "Succeeded",
+      message: "Se agregó el candidato a la lista applicants y se agregó el trabajo a la lista appliedJobs",
+      data: null,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({
+      status: "Failed",
+      message: "Error al agregar el candidato a la lista applicants o al agregar el trabajo a la lista appliedJobs",
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   getAllJobs,
   getEmployerJobsByLoginId,
@@ -561,4 +630,5 @@ module.exports = {
   email,
   getCandidateAppliedJobs,
   deleteCandidateAppliedJobs,
+  applyToJob,
 };

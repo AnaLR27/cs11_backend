@@ -12,10 +12,6 @@ const jobSchema = new Schema({
     ref: "Employer",
     required: true,
   },
-  companyName: {
-    type: String,
-    trim: true,
-  },
   location: {
     country: {
       type: String,
@@ -109,6 +105,11 @@ const jobSchema = new Schema({
     required: true,
     enum: ["Presencial", "Remoto", "Híbrido"],
   },
+  workDay: {
+    type: String,
+    required: true,
+    enum: ["Jornada Completa", "Jornada Parcial"],
+  },
   jobActive: {
     type: Boolean,
     default: true,
@@ -130,12 +131,6 @@ const jobSchema = new Schema({
       },
     },
   ],
-  logo: {
-    type: Schema.Types.String,
-    ref: "Employer",
-    trim: true,
-    required: true,
-  },
 });
 
 const Job = mongoose.model("Job", jobSchema);

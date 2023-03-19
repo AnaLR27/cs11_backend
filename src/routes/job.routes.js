@@ -14,6 +14,7 @@ const {
   email,
   getCandidateAppliedJobs,
   deleteCandidateAppliedJobs,
+  applyToJob,
 } = require("../controllers/job.controller");
 
 router.route("/job/all-jobs").get(verifyToken, getAllJobs);
@@ -27,7 +28,7 @@ router.delete(
 );
 
 router.patch(
-  "/job/edit-job/:loginId/:jobId",
+  "/job/edit-job/:jobId",
   verifyToken,
   updateJobByLoginIdAndJobId
 );
@@ -63,5 +64,7 @@ router.delete(
   verifyToken,
   deleteCandidateAppliedJobs
 );
+
+router.post("/job/job-single/:loginId/:jobId", verifyToken, applyToJob);
 
 module.exports = router;
