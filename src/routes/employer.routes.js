@@ -21,7 +21,7 @@ const {
 //upload settings
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, './src/files/logos/');
+        cb(null, './src/uploads/logos/');
     },
     filename: (req, file, cb) => {
         cb(null, 'logo-' + Date.now() + '-' + file.originalname);
@@ -35,7 +35,7 @@ router.get('/employer/:id', verifyToken, getById);
 router.post('/employer', verifyToken, createOne);
 router.patch('/employer/:id', verifyToken, updateById);
 router.delete('/employer/:id', verifyToken, deleteById);
-router.get('/employer/logo/:file', verifyToken, downloadLogo);
+router.get('/employer/logo/:file', downloadLogo);
 router.post(
     '/employer/:employerId/logo',
     [uploads.single('file0')],
