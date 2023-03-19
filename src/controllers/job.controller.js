@@ -429,8 +429,8 @@ const email = async (req, res) => {
         };
 
         const transport = nodemailer.createTransport(config);
-        let info = await transport.sendMail(msg);
-        res.send('Email sent');
+        await transport.sendMail(msg);
+        res.json({ status: "success", data: null, error: null })
     } catch (error) {
         return res
             .status(404)
