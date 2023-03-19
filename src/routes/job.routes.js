@@ -28,7 +28,7 @@ router.delete(
 );
 
 router.patch(
-  "/job/edit-job/:loginId/:jobId",
+  "/job/edit-job/:jobId",
   verifyToken,
   updateJobByLoginIdAndJobId
 );
