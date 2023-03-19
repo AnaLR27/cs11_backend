@@ -215,7 +215,7 @@ const createJob = async (req, res) => {
 			location,
 			salary,
 			jobType,
-			workday,
+			workDay,
 			jobActive,
 		} = req.body;
 		const createdAt = new Date();
@@ -242,7 +242,7 @@ const createJob = async (req, res) => {
 			jobActive,
 			createdAt,
 			company: company._id,
-			workDay: workday,
+			workDay: workDay,
 		});
 
 		await newJob.save();
