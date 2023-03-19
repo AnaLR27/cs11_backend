@@ -135,39 +135,11 @@ const updateJobByLoginIdAndJobId = async (req, res) => {
     const decodedToken = jwt_decode(token);
 
     // Obtener el loginId y el jobId de los parámetros de la ruta
-    const loginId = req.params.loginId;
     const jobId = req.params.jobId;
 
-    // Comprobar que el loginId del token coincide con el loginId de la ruta
-    if (decodedToken.UserInfo.id !== loginId) {
-      return res.status(401).json({
-        status: "Failed",
-        message: "No tienes permiso para editar este trabajo",
-        data: null,
-      });
-    }
-
-    // Buscar la información del trabajo a editar
-    const job = await Job.findOne({
-      loginId: loginId,
-      _id: jobId,
-    });
-
-    // Comprobar que el trabajo existe
-    if (!job) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "No se encontró la información del trabajo",
-        data: null,
-      });
-    }
-
+    
     // Actualizar la información del trabajo
-    const updatedJob = await Job.findOneAndUpdate(
-      { loginId: loginId, _id: jobId },
-      { $set: req.body },
-      { new: true }
-    );
+    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {new: true});
 
     // Enviar una respuesta exitosa con los datos actualizados del trabajo
     res
@@ -224,7 +196,7 @@ const createJob = async (req, res) => {
     const decodedToken = jwt_decode(token);
 
     // Obtener los datos del usuario
-    const { title, description, location, salary, jobType, jobActive } =
+    const { title, description, location, salary, jobType,  workday, jobActive } =
       req.body;
     const createdAt = new Date();
 
@@ -249,9 +221,8 @@ const createJob = async (req, res) => {
       jobType,
       jobActive,
       createdAt,
-      company: company.loginId,
-      companyName: company.companyName,
-      logo: company.logo,
+      company: company._id,
+      workDay: workday,
     });
 
     await newJob.save();
