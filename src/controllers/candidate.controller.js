@@ -424,6 +424,40 @@ const downloadPhoto = async (req, res) => {
     }
 };
 
+/**
+ * Function to download the image.
+ * @param { import('express').Request } req request data
+ * @param { import('express').Response } res response data
+ * @returns Image file.
+ * @access private
+ * @route [GET] - /candidate/photo/:file
+ */
+const downloadResume = async (req, res) => {
+    try {
+        // Pull the parameters from the URL
+        const { file } = req.params;
+        // Mount the path with img file
+        const filePath = './src/uploads/files/' + file;
+        console.log(file);
+        // Check if the file exists
+        fs.stat(filePath, (error, exists) => {
+            if (!exists) {
+                return res.status(404).json({
+                    status: 'failed',
+                    data: null,
+                    error: error.message,
+                });
+            }
+            return res.sendFile(path.resolve(filePath));
+        });
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ status: 'failed', data: undefined, error: error.message });
+    }
+};
+
 module.exports = {
     getAllCandidates,
     addToWatchlist,
@@ -435,4 +469,6 @@ module.exports = {
     deleteById,
     uploadPhoto,
     downloadPhoto,
+    downloadResume,
 };
+

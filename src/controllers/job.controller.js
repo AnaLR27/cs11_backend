@@ -92,7 +92,7 @@ const removeJobByLoginIdAndJobId = async (req, res) => {
 		}).exec();
 		console.log(jobId);
 		// Verificar que el empleador loggeado es el dueño del trabajo
-		const job = await Job.findOne({ company: data._id, _id: jobId });
+		const job = await Job.findOne({ company: data._id, _id: jobId }).populate("company").exec();
 		if (!job) {
 			return res.status(400).json({
 				status: 'Failed',
@@ -100,7 +100,7 @@ const removeJobByLoginIdAndJobId = async (req, res) => {
 				data: null,
 			});
 		}
-		if (decodedToken.UserInfo.id !== job.company.toString()) {
+		if (decodedToken.UserInfo.id !== job.company?.loginId.toString()) {
 			console.log(decodedToken.UserInfo.id);
 			console.log(job.company);
 			return res.status(403).json({

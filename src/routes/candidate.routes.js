@@ -13,7 +13,9 @@ const {
     uploadPhoto,
     downloadPhoto,
     modifyCandidate,
+    downloadResume,
 } = require('../controllers/candidate.controller');
+
 
 const storage = multer.diskStorage({
     destination: (_req, file, cb) => {
@@ -33,7 +35,7 @@ router.route('/candidate/:loginId/watchlist').post(verifyToken, addToWatchlist);
 // Recibir documento por POST
 router.post('/candidate/files/:loginId', fileUpload, (req, res) => {
     // Modificamos en BBDD
-    modifyCandidate(req.params.loginId, req.file.path);
+    modifyCandidate(req.params.loginId, req.file.filename);
     res.send('Archivo guardado!!');
 });
 
@@ -51,5 +53,7 @@ router.post(
     uploadPhoto,
 );
 router.get('/candidate/photo/:file', downloadPhoto);
+
+router.get('/candidate/file/:file', downloadResume);
 
 module.exports = router;
