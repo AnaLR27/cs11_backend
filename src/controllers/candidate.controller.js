@@ -11,7 +11,7 @@ const fs = require('fs');
 // @Acceso Privado
 const getAllCandidates = async (req, res) => {
     // Buscar todos los candidatos en la base de datos
-    const candidates = await Candidate.find({});
+    const candidates = await Candidate.find({}).populate("loginId").exec();
 
     // Retornar un estatus 200 y los datos de los candidatos
     res.status(200).json({
