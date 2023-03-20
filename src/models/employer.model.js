@@ -9,23 +9,18 @@ const employerSchema = new Schema({
     },
     companyName: {
         type: String,
-        required: true,
     },
     phone: {
         type: String,
-        required: true,
     },
     website: {
         type: String,
-        required: true,
     },
     isLookingForEmployees: {
         type: Boolean,
-        required: true,
     },
     description: {
         type: String,
-        required: true,
     },
     logo: {
         type: String,

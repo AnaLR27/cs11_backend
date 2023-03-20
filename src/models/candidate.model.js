@@ -9,11 +9,9 @@ const candidateSchema = new Schema({
     },
     fullName: {
         type: String,
-        required: true,
     },
     specialty: {
         type: String,
-        required: true,
         enum: [
             'Desarrollador Web',
             'Desarrollador Móvil',
@@ -25,21 +23,17 @@ const candidateSchema = new Schema({
             'Ventas',
             'Otros',
         ],
-        default: 'Desarrollador Web',
     },
     bootcamp: {
         type: String,
-        required: true,
     },
     edition: {
         type: Number,
-        required: true,
     },
 
     languages: [
         {
             type: String,
-            required: true,
         },
     ],
     socialNetworks: {
@@ -48,7 +42,6 @@ const candidateSchema = new Schema({
     },
     description: {
         type: String,
-        required: true,
     },
     professionalSkills: [
         {
@@ -88,7 +81,6 @@ const candidateSchema = new Schema({
     ],
     isLookingForJob: {
         type: Boolean,
-        required: true,
     },
     resume: {
         type: String,
@@ -101,7 +93,6 @@ const candidateSchema = new Schema({
             employerId: {
                 type: Schema.Types.ObjectId,
                 ref: 'Employer',
-                required: true,
             },
             lastUpdate: {
                 type: Date,

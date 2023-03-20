@@ -21,29 +21,6 @@ const getAllCandidates = async (req, res) => {
     });
 };
 
-// @Desc Obtener un candidato por su loginId
-// @Route GET /candidate/:loginId
-// @Acceso Privado
-const getCandidateByLoginId = async (req, res) => {
-    // Obtener el loginId del parámetro de la URL
-    const loginId = req.params.loginId;
-
-    // Buscar el candidato en la base de datos usando el loginId
-    const candidate = await Candidate.findOne({ loginId: loginId });
-
-    // Si el candidato no se encuentra, se retorna un estatus 404 y un mensaje de error
-    if (!candidate) {
-        return res.status(404).json({
-            status: 'Failed',
-            data: null,
-            error: 'No se encontró el candidato con el loginId especificado',
-        });
-    }
-
-    // Retornar un estatus 200 y la información del candidato
-    res.status(200).json({ status: 'Succeeded', data: candidate, error: null });
-};
-
 // @Desc Agregar un candidato a la lista de seguimiento del empleador
 // @Route POST /candidate/:loginId/watchlist
 // @Acceso Privado
@@ -189,6 +166,7 @@ const getById = async (req, res) => {
         })
             .populate('loginId')
             .exec();
+        console.log(data);
         if (!data) {
             return res.status(404).json({
                 status: 'failed',
@@ -448,7 +426,6 @@ const downloadPhoto = async (req, res) => {
 
 module.exports = {
     getAllCandidates,
-    getCandidateByLoginId,
     addToWatchlist,
     fileUpload,
     modifyCandidate,
