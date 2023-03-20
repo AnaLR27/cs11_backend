@@ -269,7 +269,7 @@ const getJobByJobId = async (req, res) => {
 	const jobId = req.params.jobId;
 
 	// Buscar la oferta de trabajo en la base de datos usando el id
-	const job = await Job.findById(jobId).exec();
+	const job = await Job.findById(jobId).populate("company").exec();
 
 	// Si la oferta de trabajo no se encuentra, se retorna un estatus 400 y un mensaje de error
 	if (!job) {
